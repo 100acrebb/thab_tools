@@ -51,12 +51,12 @@ local lagcount = CreateConVar( "lagdet_count", "5", { FCVAR_SERVER_CAN_EXECUTE }
 local lagquiet = CreateConVar( "lagdet_quiet", "15", { FCVAR_SERVER_CAN_EXECUTE } )
 local lagverbose = CreateConVar( "lagdet_verbose", "0", { FCVAR_SERVER_CAN_EXECUTE } )
 
---local lagexecute = CreateConVar( "lagdet_execute", "say [LAGDETECTOR] Server is currently detecting measureable lag.", { FCVAR_SERVER_CAN_EXECUTE } )
-local lagexecute = CreateConVar( "lagdet_execute", "ulx consay [LAGDETECTOR] Server is currently detecting measureable lag.", { FCVAR_SERVER_CAN_EXECUTE } )
+local lagexecute = CreateConVar( "lagdet_execute", "say [LAGDETECTOR] Server is currently detecting measureable lag.", { FCVAR_SERVER_CAN_EXECUTE } )
+--local lagexecute = CreateConVar( "lagdet_execute", "ulx consay [LAGDETECTOR] Server is currently detecting measureable lag.", { FCVAR_SERVER_CAN_EXECUTE } )
 
 local lagcount_meltdown = CreateConVar( "lagcount_meltdown", "100", { FCVAR_SERVER_CAN_EXECUTE } )
---local lagexecute_meltdown = CreateConVar( "lagexecute_meltdown", "say [LAGDETECTOR] The server appears to having difficulties, Captain!", { FCVAR_SERVER_CAN_EXECUTE } )
-local lagexecute_meltdown = CreateConVar( "lagexecute_meltdown", "ulx maprestart", { FCVAR_SERVER_CAN_EXECUTE } )
+local lagexecute_meltdown = CreateConVar( "lagexecute_meltdown", "say [LAGDETECTOR] The server appears to having difficulties, Captain!", { FCVAR_SERVER_CAN_EXECUTE } )
+--local lagexecute_meltdown = CreateConVar( "lagexecute_meltdown", "ulx maprestart", { FCVAR_SERVER_CAN_EXECUTE } )
 
 
 
