@@ -103,7 +103,7 @@ local function LagMonThreshold()
 		RunConsoleCommand("stats")
 		ServerLog("[LAGDETECTOR] FrameDelta= "..deltaSysCurrDiff.."  LagCount= "..currcount.."  Frames= "..framecount.."  \n")
 		
-		if currcount == lagcount_meltdown
+		if currcount == lagcount_meltdown then
 			game.ConsoleCommand(lagexecute_meltdown:GetString().."\n")
 		end
 	end
