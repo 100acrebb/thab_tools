@@ -9,6 +9,7 @@
 
 GMod Server Lag Detection Routine
 Written by Buzzkill    --    thehundredacrebloodbath.com
+https://github.com/100acrebb/thab_tools
 
 LagDetector is a simple tool to help detect and manage server-side lag.  It uses differences between SysTime() and CurTime() to detect
 unexpected server lag, and once these deltas have exceeded a certain threshold, action can be taken to help correct.
