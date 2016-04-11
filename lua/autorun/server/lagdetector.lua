@@ -16,18 +16,27 @@ unexpected server lag, and once these deltas have exceeded a certain threshold, 
 
 These thresholds and actions are configurable through cvars:
 
-lagdet_range		- if the difference between SysTime and CurTime exceeds this value in a frame, we have detected frame lag and the system increments the lag counter. Default is 0.07
-lagdet_count		- if the lag counter reaches this value, we have detected server lag and we execute lagdet_execute. Default is 5
-lagdet_quiet		- indicates how long we must go (in seconds) with no frame lag before our lag counter resets to 0. 
-lagdet_execute		- the console command(s) to execute if we detect server lag. Default is a simple say
-lagcount_meltdown	- if we detect this many frame lags without a reset, we execute lagexecute_meltdown. Default is 100
-lagexecute_meltdown	- these console command(s) are executed in the event of massive lag.  Server is probably in a collision loop or something. Good time to restart the map. Default is a simple say
+	lagdet_range		- if the difference between SysTime and CurTime exceeds this value in a frame, we have detected frame lag and the system increments the lag counter. Default is 0.07
+	lagdet_count		- if the lag counter reaches this value, we have detected server lag and we execute lagdet_execute. Default is 5
+	lagdet_quiet		- indicates how long we must go (in seconds) with no frame lag before our lag counter resets to 0. 
+	lagdet_execute		- the console command(s) to execute if we detect server lag. Default is a simple say
+	lagcount_meltdown	- if we detect this many frame lags without a reset, we execute lagexecute_meltdown. Default is 100
+	lagexecute_meltdown	- these console command(s) are executed in the event of massive lag.  Server is probably in a collision loop or something. Good time to restart the map. Default is a simple say
+
+
+In addition to running console commands, LagDetector provides three hooks that you can use to extend functionality and execute custom code based on detections. Example implementation:
+
+	hook.Add( "LagDetectorDetected", "MyLagDetectorDetected", function()  print("Lag has been detected.")  end)
+	hook.Add( "LagDetectorQuiet", "MyLagDetectorQuiet", function()  print("The server has settled down.")  end)
+	hook.Add( "LagDetectorMeltdown", "MyLagDetectorMeltdown", function()  print("ErMuhGerd, the server haz gone boom!")  end)
+
+
 
 So, using the defaults..
-LagDetector will compare SysTime and CurTime every second.  If the difference between the two >= 0.07, the lag counter increases.
-If we go 15 seconds without detecting frame lag, the lag counter resets to 0.
-If the lag counter hits 5, we execute the commands in lagdet_execute
-If the lag counter hits 100, we execute the commands in lagexecute_meltdown
+* LagDetector will compare SysTime and CurTime every second.  If the difference between the two >= 0.07, the lag counter increases.
+* If we go 15 seconds without detecting frame lag, the lag counter resets to 0.
+* If the lag counter hits 5, we execute the commands in lagdet_execute
+* If the lag counter hits 100, we execute the commands in lagexecute_meltdown
 
 
 
@@ -94,6 +103,7 @@ local function LagMonThreshold()
 		if RealTime() > clearTime then -- passed our clear time?
 			currcount = 0 -- clear!
 			ServerLog("[LAGDETECTOR] Lag has subsided\n")
+			local returnedValue = hook.Run( "LagDetectorQuiet" )
 		end
 	end
 
@@ -105,6 +115,7 @@ local function LagMonThreshold()
 		
 		if currcount == lagcount_meltdown:GetInt() then
 			game.ConsoleCommand(lagexecute_meltdown:GetString().."\n")
+			local returnedValue = hook.Run( "LagDetectorMeltdown" )
 		end
 	end
 	
@@ -131,6 +142,7 @@ timer.Create("LagDetCheckPerf",1, 0, function()
 		ServerLog("[LAGDETECTOR] Lag detected!\n")
 		if (lagexecute:GetString() ~= "") then
 			game.ConsoleCommand(lagexecute:GetString().."\n")
+			local returnedValue = hook.Run( "LagDetectorDetected" )
 		end
 	end
 	
