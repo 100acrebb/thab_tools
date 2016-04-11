@@ -34,9 +34,9 @@ In addition to running console commands, LagDetector provides three hooks that y
 
 So, using the defaults..
 * LagDetector will compare SysTime and CurTime every second.  If the difference between the two >= 0.07, the lag counter increases.
-* If we go 15 seconds without detecting frame lag, the lag counter resets to 0.
-* If the lag counter hits 5, we execute the commands in lagdet_execute
-* If the lag counter hits 100, we execute the commands in lagexecute_meltdown
+* If we go 15 seconds without detecting frame lag, the lag counter resets to 0 and the associated hook is called.
+* If the lag counter hits 5, we execute the commands in lagdet_execute (if any) and the associated hook is called.
+* If the lag counter hits 100, we execute the commands in lagexecute_meltdown (if any) and the associated hook is called.
 
 
 
