@@ -90,7 +90,6 @@ if SERVER then
 		
 		timer.Create( "MaptractorTimer", TimerInMins * 60, 0, function() 
 		
-			print("Running MaptractorTimer...")
 			if (PlayersAtFirstCheck == -1) then
 				PlayersAtFirstCheck = #player.GetAll()
 			end
