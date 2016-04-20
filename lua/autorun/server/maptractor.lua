@@ -34,6 +34,7 @@ To Do:
   Build out an optional routine to load the most popular map(s) when the server goes empty.
   Eliminate the need for ULX for the !mapstats command
   Incorporate peak time / off time concepts, so maps don't get penalized for running during off-hours, etc.
+  Timers wont start on a restarted server until first player joins.  Figure out a workaround that doesn't involve cheese (ie, temp bot, etc).
   
   
 
