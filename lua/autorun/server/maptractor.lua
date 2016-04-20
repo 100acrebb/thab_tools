@@ -78,13 +78,15 @@ if SERVER then
 			MaptractorTable[game.GetMap()] = {}
 		end
 		
-		-- safety valve, for new maps and/or newly added metrics and old data
-		if (MaptractorTable[game.GetMap()].playerscore == nil) then MaptractorTable[game.GetMap()].playerscore = 0 end
-		if (MaptractorTable[game.GetMap()].magnetscore == nil) then MaptractorTable[game.GetMap()].magnetscore = 0 end
-		if (MaptractorTable[game.GetMap()].timempty == nil) then MaptractorTable[game.GetMap()].timempty = 0 end
-		if (MaptractorTable[game.GetMap()].totaltime == nil) then MaptractorTable[game.GetMap()].totaltime = 0 end
+		local MapStats = MaptractorTable[game.GetMap()]
 		
-		MaptractorTable[game.GetMap()].version = version
+		-- safety valve, for new maps and/or newly added metrics and old data
+		if (MapStats.playerscore == nil) then MapStats.playerscore = 0 end
+		if (MapStats.magnetscore == nil) then MapStats.magnetscore = 0 end
+		if (MapStats.timempty == nil) then MapStats.timempty = 0 end
+		if (MapStats.totaltime == nil) then MapStats.totaltime = 0 end
+		
+		MapStats.version = version
 		file.Write( "maptractor.txt", util.TableToJSON(MaptractorTable), true) 
 		
 		
@@ -93,17 +95,19 @@ if SERVER then
 			if (PlayersAtFirstCheck == -1) then
 				PlayersAtFirstCheck = #player.GetAll()
 			end
-		
-			-- let's calc some stats, bitches!
-			MaptractorTable[game.GetMap()].totaltime = MaptractorTable[game.GetMap()].totaltime + TimerInMins
-			MaptractorTable[game.GetMap()].playerscore = MaptractorTable[game.GetMap()].playerscore + #player.GetAll()
-			MaptractorTable[game.GetMap()].magnetscore = MaptractorTable[game.GetMap()].magnetscore + (#player.GetAll() - PlayersAtFirstCheck)
 			
-			MaptractorTable[game.GetMap()].playermetric = MaptractorTable[game.GetMap()].playerscore / MaptractorTable[game.GetMap()].totaltime
-			MaptractorTable[game.GetMap()].magnetmetric = MaptractorTable[game.GetMap()].magnetscore / MaptractorTable[game.GetMap()].totaltime
+			local MapStats = MaptractorTable[game.GetMap()]
+			
+			-- let's calc some stats, bitches!
+			MapStats.totaltime = MapStats.totaltime + TimerInMins
+			MapStats.playerscore = MapStats.playerscore + #player.GetAll()
+			MapStats.magnetscore = MapStats.magnetscore + (#player.GetAll() - PlayersAtFirstCheck)
+			
+			MapStats.playermetric = MapStats.playerscore / MapStats.totaltime
+			MapStats.magnetmetric = MapStats.magnetscore / MapStats.totaltime
 			
 			if (#player.GetAll() == 0) then
-				MaptractorTable[game.GetMap()].timempty = MaptractorTable[game.GetMap()].timempty + TimerInMins
+				MapStats.timempty = MapStats.timempty + TimerInMins
 			end
 			
 			file.Write( "maptractor.txt", util.TableToJSON(MaptractorTable, true) ) 
