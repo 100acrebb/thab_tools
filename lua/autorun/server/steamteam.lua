@@ -1,15 +1,43 @@
+--[[
+
+ _____ _                     _____                    
+/  ___| |                   |_   _|                   
+\ `--.| |_ ___  __ _ _ __ ___ | | ___  __ _ _ __ ___  
+ `--. \ __/ _ \/ _` | '_ ` _ \| |/ _ \/ _` | '_ ` _ \ 
+/\__/ / ||  __/ (_| | | | | | | |  __/ (_| | | | | | |
+\____/ \__\___|\__,_|_| |_| |_\_/\___|\__,_|_| |_| |_|
+
+
+
+Steam Group Award System
+Written by Buzzkill    --    thehundredacrebloodbath.com
+https://github.com/100acrebb/thab_tools
+
+SteamTeam is a framework for detecting player membership to a Steam group and awarding in-game bonuses as a result.  It is currently a work in progress, and support for multiple groups and
+multiple bonus types will be added, as well as separating out and improving the configuration of groups/bonuses.
+
+NOTE: IT CURRENTLY ONLY SUPPORTS A SINGLE GROUP AND A SINGLE BONUS (Pointshop 1 points as well as a configurable callback). 
+
+An example configuration is included below, with notes on important values.  This is probably the best approach to configuration documentation for now. 
+]]
+
 STEAMTEAM = {}
 STEAMTEAM.Items = {}
 STEAMTEAM.Groups = {}
 
 
 STEAMTEAM.Groups[1] = {}
+-- URL of the target group
 STEAMTEAM.Groups[1].URL = "http://steamcommunity.com/groups/100acrebb"
+-- A configurable callback. In this example, I set a networked boolean if the user is a member of the above group.
+-- I'm using this in other areas - for example, a custom icon in HatsChat
 STEAMTEAM.Groups[1].OnIsMember = function(self, ply) ply:SetNWBool( "THABMember", true ) end
 STEAMTEAM.Groups[1].Bonus = {}
 
 STEAMTEAM.Groups[1].Bonus[1] = {}
-STEAMTEAM.Groups[1].Bonus[1].Type = "PSPOINTS"
+-- The bonus type (PSPOINTS only, for now)
+STEAMTEAM.Groups[1].Bonus[1].Type = "PS1POINTS"
+-- The number of points
 STEAMTEAM.Groups[1].Bonus[1].Amount = 10000
 
 
@@ -43,7 +71,7 @@ function ST_CheckPlayer( ply )
 		
 		-- now check to see if person should get 
 		
-		if (STEAMTEAM.Groups[1].Bonus[1].Type == "PSPOINTS" and !ply.PS_GivePoints) then debugprint("Points award, but no PS") return end
+		if (STEAMTEAM.Groups[1].Bonus[1].Type == "PS1POINTS" and !ply.PS_GivePoints) then debugprint("Points award, but no PS") return end
 		
 		local val = sql.QueryValue( "SELECT received_count FROM steamteam WHERE playerid = " .. sid64 .. " and groupid = 1 and bonusid = 1;" )
 		if (val) then -- got a row
