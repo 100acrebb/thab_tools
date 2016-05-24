@@ -7,25 +7,29 @@
 /\__/ / ||  __/ (_| | | | | | | |  __/ (_| | | | | | |
 \____/ \__\___|\__,_|_| |_| |_\_/\___|\__,_|_| |_| |_|
 
-
-
 Steam Group Award System
 Written by Buzzkill    --    thehundredacrebloodbath.com
 https://github.com/100acrebb/thab_tools
 
-SteamTeam is a framework for detecting player membership to a Steam group and awarding in-game bonuses as a result.  It is currently a work in progress, and support for multiple groups and
-multiple bonus types will be added, as well as separating out and improving the configuration of groups/bonuses.
+(I apologize for the name.  It's stupid, but it stuck)
 
-NOTE: IT CURRENTLY ONLY SUPPORTS A SINGLE GROUP AND A SINGLE BONUS (Pointshop 1 points as well as a configurable callback). 
+SteamTeam is a framework for detecting player membership to a Steam group and awarding in-game bonuses as a result.  It is currently a work in progress, and support for multiple groups and
+multiple bonus types is forthcoming, as well as separating out and improving the configuration of groups/bonuses.
+
 
 An example configuration is included below, with notes on important values.  This is probably the best approach to configuration documentation for now. 
+
+Membership is checked upon user initial spawn as well as every 10 mins.
+NOTE: IT CURRENTLY ONLY SUPPORTS A SINGLE GROUP AND A SINGLE BONUS (Pointshop 1 points as well as a configurable callback -- see inline notes in config below). 
+
+
 ]]
 
 STEAMTEAM = {}
 STEAMTEAM.Items = {}
 STEAMTEAM.Groups = {}
 
-
+-- One group for now
 STEAMTEAM.Groups[1] = {}
 -- URL of the target group
 STEAMTEAM.Groups[1].URL = "http://steamcommunity.com/groups/100acrebb"
@@ -34,6 +38,7 @@ STEAMTEAM.Groups[1].URL = "http://steamcommunity.com/groups/100acrebb"
 STEAMTEAM.Groups[1].OnIsMember = function(self, ply) ply:SetNWBool( "THABMember", true ) end
 STEAMTEAM.Groups[1].Bonus = {}
 
+-- One bonus for now
 STEAMTEAM.Groups[1].Bonus[1] = {}
 -- The bonus type (PSPOINTS only, for now)
 STEAMTEAM.Groups[1].Bonus[1].Type = "PS1POINTS"
@@ -62,15 +67,14 @@ function ST_CheckPlayer( ply )
 	
 	if memberlist[sid64] then
 		debugprint("Member!")
+		ply.SteamTeamMember = true
 		-- config'd callback
 		if STEAMTEAM.Groups[1].OnIsMember then
 			STEAMTEAM.Groups[1]:OnIsMember(ply)
 		end
 		
-		-- if ply.PS_GivePoints == nil then print("STEAMTEAM: no points function") return end -- don't bother for now if PS isn't on
 		
-		-- now check to see if person should get 
-		
+		-- now check to see if person should get bonus
 		if (STEAMTEAM.Groups[1].Bonus[1].Type == "PS1POINTS" and !ply.PS_GivePoints) then debugprint("Points award, but no PS") return end
 		
 		local val = sql.QueryValue( "SELECT received_count FROM steamteam WHERE playerid = " .. sid64 .. " and groupid = 1 and bonusid = 1;" )
@@ -98,21 +102,22 @@ function ST_CheckPlayer( ply )
 	end
 end
 
+
+
+
 local function ST_PlayerInitialSpawn( ply )
 	timer.Simple(10, function() if IsValid(ply) then ST_CheckPlayer(ply) end end)
 end
 hook.Add( "PlayerInitialSpawn", "STEAMTEAMPlayerInitialSpawn", ST_PlayerInitialSpawn )
 
+
 local function ST_CheckAllPlayers()
 	for k, v in pairs(player.GetAll()) do
-		if not v:GetNWBool("THABMember", false) then
+		if not v.SteamTeamMember then
 			ST_CheckPlayer( v )
 		end
 	end
 end
-
-
-
 
 
 -- for each page, get total pages if we don't know it and gather all steam ids on the page
