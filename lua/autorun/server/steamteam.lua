@@ -127,22 +127,15 @@ local function ST_GetPage(currentPage, totalPages)
 	http.Fetch( STEAMTEAM.Groups[1].URL .. "/memberslistxml/?xml=1&p=" .. currentPage,
 		function( body, len, headers, code ) -- On Success
 			-- get total pages
-			body = string.Replace(body, "<", "")
-			body = string.Replace(body, ">", "")
-			body = string.Replace(body, "/", "")
-			if totalPages == 9999 then
+			if totalPages == -9999 then
 				totalPages = 0 -- safety valve in case the assignment gets blown below
-				local splitPagesCheck = string.Split( tostring(body), "totalPages")
-				totalPages = tonumber(splitPagesCheck[2])
+				local x,y,z = body:find("<totalPages>(%d-)</totalPages>")
+				totalPages = tonumber(z)
 				debugprint ("totalPages "..totalPages)
 			end
 			
-			local splitSteamIDs = string.Explode("steamID64", tostring(body), true)
-			for k, v in ipairs( splitSteamIDs ) do
-				if string.Left(v,4) == "7656" then
-					memberlist[v] = true	
-					--debugprint(v)
-				end
+			for v in body:gmatch("<steamID64>(.-)</steamID64>") do
+				memberlist[v] = true	
 			end
 			
 			
@@ -166,7 +159,7 @@ end
 local function ST_BuildMemberList()
 	
 	local currentPage = 1
-	local totalPages = 9999
+	local totalPages = -9999
 	memberlist = {}
 	
 	-- called each time we want a new page
